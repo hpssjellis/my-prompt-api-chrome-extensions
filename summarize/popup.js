@@ -20,7 +20,7 @@ async function mySummarizePage() {
   myStartTimer(mySummaryArea);
 
   const [myTab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  
+
   // Check for a valid URL
   if (myTab.url.startsWith('chrome://') || myTab.url.startsWith('chrome-extension://') || myTab.url.startsWith('file://')) {
     myStopTimer();
@@ -36,7 +36,7 @@ async function mySummarizePage() {
   const myPageText = myResults[0].result;
 
   if (myPageText) {
-    const mySummary = await mySummarizeText(myPageText);
+    const mySummary = await mySummarizeWithPrompt(myPageText);
     myStopTimer();
     mySummaryArea.textContent = mySummary;
   } else {
@@ -51,7 +51,7 @@ async function mySummarizeSelection() {
   myStartTimer(mySummaryArea);
 
   const [myTab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  
+
   // Check for a valid URL
   if (myTab.url.startsWith('chrome://') || myTab.url.startsWith('chrome-extension://') || myTab.url.startsWith('file://')) {
     myStopTimer();
@@ -67,7 +67,7 @@ async function mySummarizeSelection() {
   const mySelectedText = myResults[0].result;
 
   if (mySelectedText) {
-    const mySummary = await mySummarizeText(mySelectedText);
+    const mySummary = await mySummarizeWithPrompt(mySelectedText);
     myStopTimer();
     mySummaryArea.textContent = mySummary;
   } else {
@@ -86,19 +86,20 @@ function myGetSelectedText() {
   return window.getSelection().toString();
 }
 
-// This is the updated function that uses the real Summarizer API.
-async function mySummarizeText(myText) {
-  if ('Summarizer' in window) {
+// This is the function that uses the LanguageModel API with a prompt.
+async function mySummarizeWithPrompt(myText) {
+  if ('LanguageModel' in window) {
     try {
-      const mySummarizer = await Summarizer.create();
-      const mySummary = await mySummarizer.summarize(myText);
-      return mySummary.output;
+      const myModel = await LanguageModel.create();
+      const myPrompt = `Summarize the following text:\n\n${myText}`;
+      const mySummary = await myModel.prompt(myPrompt);
+      return mySummary;
     } catch (error) {
-      console.error('Error during summarization:', error);
+      console.error('Error using LanguageModel API:', error);
       return `Error: ${error.message}`;
     }
   } else {
-    return 'The Summarizer API is not supported in this browser or is not enabled.';
+    return 'The LanguageModel API is not supported in this browser or is not enabled.';
   }
 }
 
