@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      width: 300px;
+      padding: 10px;
+      font-family: sans-serif;
+    }
+    #mySummaryArea {
+      margin-top: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      white-space: pre-wrap;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Page Summarizer</h2>
+  <button onclick="mySummarizePage()">Summarize Full Page</button>
+  <button onclick="mySummarizeSelection()">Summarize Selected Text</button>
+  
+  <div id="mySummaryArea">
+    Click a button to analyze the content.
+  </div>
+
+  <script>
+    // Grabs and summarizes the text from the entire webpage.
+    async function mySummarizePage() {
+      const mySummaryArea = document.getElementById('mySummaryArea');
+      mySummaryArea.textContent = 'Summarizing full page...';
+
+      const [myTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      
+      const myResults = await chrome.scripting.executeScript({
+        target: { tabId: myTab.id },
+        func: myGetPageText
+      });
+
+      const myPageText = myResults[0].result;
+
+      if (myPageText) {
+        const mySummary = await mySummarizeText(myPageText);
+        mySummaryArea.textContent = mySummary;
+      } else {
+        mySummaryArea.textContent = 'Could not retrieve text from the page.';
+      }
+    }
+
+    // Grabs and summarizes only the text the user has highlighted.
+    async function mySummarizeSelection() {
+      const mySummaryArea = document.getElementById('mySummaryArea');
+      mySummaryArea.textContent = 'Summarizing selected text...';
+
+      const [myTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      
+      const myResults = await chrome.scripting.executeScript({
+        target: { tabId: myTab.id },
+        func: myGetSelectedText
+      });
+
+      const mySelectedText = myResults[0].result;
+
+      if (mySelectedText) {
+        const mySummary = await mySummarizeText(mySelectedText);
+        mySummaryArea.textContent = mySummary;
+      } else {
+        mySummaryArea.textContent = 'No text was selected on the page.';
+      }
+    }
+
+    // This function is injected to get all text from the page body.
+    function myGetPageText() {
+      return document.body.innerText;
+    }
+
+    // This function is injected to get only the selected text.
+    function myGetSelectedText() {
+      return window.getSelection().toString();
+    }
+
+    // This is the placeholder for your AI summarization logic.
+    async function mySummarizeText(myText) {
+      const myWords = myText.split(/\s+/);
+      const myFirstSentences = myWords.slice(0, 50).join(' ') + '... (This is a simplified summary to demonstrate the process. Your AI would go here.)';
+      return myFirstSentences;
+    }
+  </script>
+</body>
+</html>
