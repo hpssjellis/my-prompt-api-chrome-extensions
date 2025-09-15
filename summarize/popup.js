@@ -74,6 +74,9 @@ function myGetSelectedText() {
 
 // This is the placeholder for your AI summarization logic.
 async function mySummarizeText(myText) {
+  // Simulating an API call or computation with a delay
+  await new Promise(resolve => setTimeout(resolve, 3000));
+  
   const myWords = myText.split(/\s+/);
   const myFirstSentences = myWords.slice(0, 50).join(' ') + '... (This is a simplified summary to demonstrate the process. Your AI would go here.)';
   return myFirstSentences;
@@ -84,6 +87,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const myFullPageButton = document.getElementById('myFullPageButton');
   const mySelectionButton = document.getElementById('mySelectionButton');
 
-  myFullPageButton.addEventListener('click', mySummarizePage);
-  mySelectionButton.addEventListener('click', mySummarizeSelection);
+  if (myFullPageButton) {
+    myFullPageButton.addEventListener('click', mySummarizePage);
+  }
+  if (mySelectionButton) {
+    mySelectionButton.addEventListener('click', mySummarizeSelection);
+  }
 });
