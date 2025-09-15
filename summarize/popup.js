@@ -21,6 +21,13 @@ async function mySummarizePage() {
 
   const [myTab] = await chrome.tabs.query({ active: true, currentWindow: true });
   
+  // Check for a valid URL
+  if (myTab.url.startsWith('chrome://') || myTab.url.startsWith('chrome-extension://') || myTab.url.startsWith('file://')) {
+    myStopTimer();
+    mySummaryArea.textContent = 'Error: Cannot summarize this page due to security restrictions.';
+    return; // Exit the function
+  }
+
   const myResults = await chrome.scripting.executeScript({
     target: { tabId: myTab.id },
     func: myGetPageText
@@ -45,6 +52,13 @@ async function mySummarizeSelection() {
 
   const [myTab] = await chrome.tabs.query({ active: true, currentWindow: true });
   
+  // Check for a valid URL
+  if (myTab.url.startsWith('chrome://') || myTab.url.startsWith('chrome-extension://') || myTab.url.startsWith('file://')) {
+    myStopTimer();
+    mySummaryArea.textContent = 'Error: Cannot summarize this page due to security restrictions.';
+    return; // Exit the function
+  }
+
   const myResults = await chrome.scripting.executeScript({
     target: { tabId: myTab.id },
     func: myGetSelectedText
@@ -74,7 +88,6 @@ function myGetSelectedText() {
 
 // This is the updated function that uses the real Summarizer API.
 async function mySummarizeText(myText) {
-  // Check if the Summarizer API is available
   if ('Summarizer' in window) {
     try {
       const mySummarizer = await Summarizer.create();
