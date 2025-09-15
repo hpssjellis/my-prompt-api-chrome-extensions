@@ -26,14 +26,14 @@ async function mySummarizePage() {
     func: myGetPageText
   });
 
-  myStopTimer();
-
   const myPageText = myResults[0].result;
 
   if (myPageText) {
     const mySummary = await mySummarizeText(myPageText);
+    myStopTimer();
     mySummaryArea.textContent = mySummary;
   } else {
+    myStopTimer();
     mySummaryArea.textContent = 'Could not retrieve text from the page.';
   }
 }
@@ -50,14 +50,14 @@ async function mySummarizeSelection() {
     func: myGetSelectedText
   });
 
-  myStopTimer();
-
   const mySelectedText = myResults[0].result;
 
   if (mySelectedText) {
     const mySummary = await mySummarizeText(mySelectedText);
+    myStopTimer();
     mySummaryArea.textContent = mySummary;
   } else {
+    myStopTimer();
     mySummaryArea.textContent = 'No text was selected on the page.';
   }
 }
@@ -72,14 +72,21 @@ function myGetSelectedText() {
   return window.getSelection().toString();
 }
 
-// This is the placeholder for your AI summarization logic.
+// This is the updated function that uses the real Summarizer API.
 async function mySummarizeText(myText) {
-  // Simulating an API call or computation with a delay
-  await new Promise(resolve => setTimeout(resolve, 3000));
-  
-  const myWords = myText.split(/\s+/);
-  const myFirstSentences = myWords.slice(0, 50).join(' ') + '... (This is a simplified summary to demonstrate the process. Your AI would go here.)';
-  return myFirstSentences;
+  // Check if the Summarizer API is available
+  if ('Summarizer' in window) {
+    try {
+      const mySummarizer = await Summarizer.create();
+      const mySummary = await mySummarizer.summarize(myText);
+      return mySummary.output;
+    } catch (error) {
+      console.error('Error during summarization:', error);
+      return `Error: ${error.message}`;
+    }
+  } else {
+    return 'The Summarizer API is not supported in this browser or is not enabled.';
+  }
 }
 
 // Event listeners to handle button clicks.
