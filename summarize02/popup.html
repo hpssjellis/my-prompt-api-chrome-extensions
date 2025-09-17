@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      min-width: 300px;
+      min-height: 150px;
+      padding: 10px;
+      font-family: sans-serif;
+    }
+    #mySummaryArea {
+      margin-top: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      resize: both;
+      overflow: auto;
+      max-height: 400px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Page Summarizer</h2>
+  <button id="myFullPageButton">Summarize Full Page</button>
+  <button id="mySelectionButton">Summarize Selected Text</button>
+  
+  <div id="mySummaryArea">
+    Click a button to analyze the content.
+  </div>
+
+  <script src="popup.js"></script>
+
+</body>
+</html>
