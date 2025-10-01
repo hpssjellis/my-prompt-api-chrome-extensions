@@ -5,7 +5,8 @@
   "description": "A simple extension to summarize content from the active webpage using a built-in AI.",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "ai"         // <--- NEW: Added the 'ai' permission for structured output
   ],
   "action": {
     "default_popup": "popup.html",
